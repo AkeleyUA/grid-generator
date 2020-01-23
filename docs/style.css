@@ -1,0 +1,116 @@
+
+#root {
+    position: absolute;
+    top:100px;
+    left:100px;
+}
+
+#root2 {
+    position: absolute;
+    top:500px;
+    left:100px;
+}
+
+
+.boxes-container {
+    display: flex;
+    border: 1px solid lightskyblue;
+    position: relative;
+    z-index: 2;
+}
+.box {
+    width: 50px;
+    height: 50px;
+    background:lightskyblue;
+    z-index: 2;
+    border: 1px solid white;
+}
+
+.delete-btns-container {
+    position: absolute;
+    top:-52px;
+    left:-52px;
+}
+
+.add-btns-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+.add-col {
+    position: absolute;
+    top: 1px;
+    right: -52px;
+}
+
+.add-row {
+    position: absolute;
+    left: 1px;
+    bottom: -52px;
+}
+
+.del-col {
+    position: absolute;
+    top: 0px;
+    left: 53px;
+}
+
+.del-row {
+    position: absolute;
+    top: 53px;
+    left: 0px;
+}
+
+.delete {
+    background: brown;
+    width: 52px;
+    height:52px;
+    margin: 0px;
+    font-size: 32px;
+    font-weight: 400;
+    color:white;
+    text-align: center;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.delete:enabled:hover {
+    opacity: 0.7;
+    transition: opacity .3s;
+}
+
+.add:enabled:hover {
+    opacity: 0.7;
+    transition: opacity .3s;
+}
+
+.add {
+    background: orange;
+    width: 52px;
+    height:52px;
+    margin: 0px;
+    font-size: 32px;
+    font-weight: 600;
+    color:white;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+}
+
+.container-2 {
+    position: absolute;
+    top:100px;
+    left:500px;
+    display: flex;
+    border: 1px solid lightsalmon;
+}
+
+.hide {
+    display: none;
+}
+
+button {
+    border: 1px solid cadetblue;
+}
