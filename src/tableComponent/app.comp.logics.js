@@ -1,168 +1,198 @@
-
-export function componentTable(id) {
-
+export default function ComponentTable(id) {
   const container = document.querySelector(id);
   const addCol = document.createElement('button');
   const addRow = document.createElement('button');
   const delCol = document.createElement('button');
   const delRow = document.createElement('button');
 
-
-
   const addContainer = document.createElement('div');
   const deleteContainer = document.createElement('div');
   const boxesContainer = document.createElement('div');
+  const containerTable = document.createElement('div');
 
   addContainer.classList.add('add-btns-container');
   deleteContainer.classList.add('delete-btns-container');
   boxesContainer.classList.add('boxes-container');
+  containerTable.classList.add('container');
 
   addCol.classList.add('add-col', 'add');
   addRow.classList.add('add-row', 'add');
-  delCol.classList.add('del-col', 'delete', 'hide');
-  delRow.classList.add('del-row', 'delete', 'hide');
-
+  delCol.classList.add('del-col', 'delete');
+  delRow.classList.add('del-row', 'delete');
+  
   addCol.innerText = '+';
   addRow.innerText = '+';
   delCol.innerText = '-';
   delRow.innerText = '-';
-
-
-
-  container.append(addContainer);
-  container.append(deleteContainer);
-  container.append(boxesContainer);
 
   addContainer.append(addCol);
   addContainer.append(addRow);
   deleteContainer.append(delCol);
   deleteContainer.append(delRow);
 
+  containerTable.append(addContainer);
+  containerTable.append(deleteContainer);
+  containerTable.append(boxesContainer);
 
-  let colState = 4;
-  let rowState = 4;
-  let colIndex = 0;
-  let rowIndex = 0;
+  container.append(containerTable);
+
+  let colsCounter = 5;
+  let rowsCounter = 5;
+  let currentCol = 0;
+  let currentRow = 0;
 
   const boxFullSize = 52
 
-  const addHide = (btn) => btn.classList.add('hide');
-  const delHide = (btn) => btn.classList.remove('hide');
-
-  const createBox = (col, n) => {
-    for (let i = 0; i < n; i++) {
-      let box = document.createElement('div');
-      box.classList.add('box');
-      col.append(box);
-    }
+  const hideButton = (btn) => {
+    btn.style.display = 'none';
+  };
+  const showButton = (btn) => {
+    btn.style.display = 'block';
   };
 
-
-
-  const createCol = (container, n) => {
+  const createCol = (row, n) => {
     for (let i = 0; i < n; i++) {
       let col = document.createElement('div');
       col.classList.add('col');
-      container.append(col);
-      createBox(col, rowState);
+      row.append(col);
     }
   };
 
-  createCol(boxesContainer, 4);
+  const createRow = (container, n) => {
+    for (let i = 0; i < n; i++) {
+      let row = document.createElement('div');
+      row.classList.add('row');
+      createCol(row, colsCounter);
+      container.append(row);
+    }
+  };
 
-  addCol.addEventListener('click', () => {
-    colState++;
-    createCol(boxesContainer, colState - boxesContainer.children.length);
-  });
+  const rowsDataIndex = () => {
+    let rows = boxesContainer.querySelectorAll('.row');
+    rows.forEach((row, index) => {
+      row.dataset.rowIndex = index;
+      let cols = row.querySelectorAll('.col');
+        cols.forEach((col, index) => col.dataset.colIndex = index)
+    })
+  }
+
+  createRow(boxesContainer, rowsCounter);
+  rowsDataIndex();
 
   addRow.addEventListener('click', () => {
-    rowState++;
-    let cols = boxesContainer.querySelectorAll('.col');
-    cols.forEach(col => {
-      createBox(col, rowState - col.children.length);
-    });
+    rowsCounter++;
+    createRow(boxesContainer, rowsCounter - boxesContainer.children.length);  
+    rowsDataIndex();
   });
 
-
-  delCol.addEventListener('click', () => {
-    let cols = container.querySelectorAll('.col');
-    cols.forEach((col, index) => {
-      if (index === colIndex) {
-        col.remove();
-      }
+  addCol.addEventListener('click', () => {
+    colsCounter++;
+    let rows = boxesContainer.querySelectorAll('.row');
+    rows.forEach(row => {
+      createCol(row, colsCounter - row.children.length);
     });
-    let colsLength = cols.length-1;
-    if (colsLength === colIndex) {
-      delCol.style.transform = `translateX(${colsLength * boxFullSize - boxFullSize}px)`
-    } else {
-      delCol.style.transform = `translateX(${colIndex * boxFullSize}px)`
-    }
-    if (colsLength < 2) {
-      addHide(delCol);
-    }
-    (colState -1 > colIndex ? colIndex : colIndex--) 
-    colState--;
+    rowsDataIndex();
   });
+
 
   delRow.addEventListener('click', () => {
-    let cols = container.querySelectorAll('.col');
-    cols.forEach((col) => {
-      let boxes = col.querySelectorAll('.box');
-      col.removeChild(boxes[rowIndex]);
+    let rows = container.querySelectorAll('.row');
+    let rowsLength = rows.length - 1;
+
+    rows[currentRow].remove();
+
+    (rowsLength < 2 ? hideButton(delRow) : showButton(delRow));
+    (rowsLength === currentRow ? 
+      delRow.style.transform = `translateY(${rowsLength * boxFullSize - boxFullSize}px)` : 
+      delRow.style.transform = `translateY(${+currentRow * boxFullSize}px)`);
+    (rowsCounter -1 > currentRow ? currentRow : currentRow--);
+    rowsCounter--;
+    rowsDataIndex();
+  });
+
+  delCol.addEventListener('click', () => {
+    let rows = container.querySelectorAll('.row');
+    let colLength = rows[0].children.length - 1;
+
+    rows.forEach((row) => {
+      let cols = row.querySelectorAll('.col');
+      row.removeChild(cols[currentCol]);
     });
-    let rowLength = cols[0].children.length -1;
 
-    if (rowLength < 1) {
-      addHide(delRow);
-    }
-    
-
-    if (rowLength+1 === rowIndex) {
-      delRow.style.transform = `translateY(${rowLength * boxFullSize}px)`
-    } else {
-      delRow.style.transform = `translateY(${(rowIndex) * boxFullSize}px)`
-    }
-    (rowState -1 > rowIndex ? rowIndex : rowIndex--) 
-    rowState--;
-    
+    (colLength < 1 ? hideButton(delCol) : showButton(delCol));
+    (colLength === currentCol ? 
+      delCol.style.transform = `translateX(${colLength * boxFullSize - boxFullSize}px)` : 
+      delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`);
+    (colsCounter -1 > currentCol ? currentCol : currentCol--);
+    colsCounter--;
+    rowsDataIndex();
   });
 
   container.addEventListener('mouseover', (event) => {
+    showButton(delCol);
+    showButton(delRow);
+    let rows = container.querySelectorAll('.row');
+    (rows[0].children.length < 2 ? hideButton(delCol) : showButton(delCol));
+    (rows.length < 2 ? hideButton(delRow) : showButton(delRow));
 
-    let cols = container.querySelectorAll('.col');
-    delHide(delCol);
-    delHide(delRow);
-    if (cols.length < 2) {
-      addHide(delCol);
-    } else {
-      delHide(delCol);
+    if (event.target.classList.contains('col')) {
+      currentCol = +event.target.dataset.colIndex;
+      currentRow = +event.target.parentNode.dataset.rowIndex;
     }
 
-    cols.forEach((col, index) => {
-
-      if (col.children.length < 2) {
-        addHide(delRow);
-      } else {
-        delHide(delRow);
-      }
-
-      if (event.target.parentNode === col) {
-        colIndex = index;
-        delCol.style.transform = `translateX(${index * boxFullSize}px)`
-        let boxes = col.querySelectorAll('.box');
-
-        boxes.forEach((box, i) => {
-          if (event.target === box) {
-            rowIndex = i;
-            delRow.style.transform = `translateY(${i * boxFullSize}px)`
-          }
-        });
-      }
-    });
+    delRow.style.transform = `translateY(${currentRow * boxFullSize}px)`;
+    delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`;
   });
 
   container.addEventListener('mouseout', () => {
-    addHide(delCol);
-    addHide(delRow);
+    hideButton(delCol);
+    hideButton(delRow);
   });
-};
+
+
+  const containerMover = () => {
+    let move = false;
+    let left = 0;
+    let top = 0;
+    
+
+    container.addEventListener('mousedown', (event) => {
+      console.log(event.target);
+      if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
+        move = true;
+        hideButton(delCol);
+        hideButton(delRow);
+        hideButton(addCol);
+        hideButton(addRow);
+        left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.target.getBoundingClientRect().width / 2;
+        top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.target.getBoundingClientRect().height / 2;
+      }
+    });
+
+    container.addEventListener('mouseup', () => {
+      move = false;
+      showButton(addCol);
+      showButton(addRow);
+
+      (colsCounter > 1 ? showButton(delCol) : false );
+      (rowsCounter > 1 ? showButton(delRow) : false );
+
+    });
+
+    window.addEventListener('mousemove', event => {
+      let mousePosition = {
+        x:event.clientX,
+        y:event.clientY
+      }
+
+      if(move) {
+        container.style.left = `${mousePosition.x + left}px`; 
+        container.style.top = `${mousePosition.y + top}px`;
+      }
+    });
+
+  };
+
+
+  containerMover();
+}
