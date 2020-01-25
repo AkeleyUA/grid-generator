@@ -159,10 +159,10 @@ export default function ComponentTable(id) {
     container.addEventListener('mousedown', (event) => {
       if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
         move = true;
-        hideButton(delCol);
-        hideButton(delRow);
-        hideButton(addCol);
-        hideButton(addRow);
+        // hideButton(delCol);
+        // hideButton(delRow);
+        // hideButton(addCol);
+        // hideButton(addRow);
         left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.target.getBoundingClientRect().width / 2;
         top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.target.getBoundingClientRect().height / 2;
       }
@@ -170,11 +170,10 @@ export default function ComponentTable(id) {
 
     container.addEventListener('mouseup', () => {
       move = false;
-      showButton(addCol);
-      showButton(addRow);
-
-      (colsCounter > 1 ? showButton(delCol) : false );
-      (rowsCounter > 1 ? showButton(delRow) : false );
+      // showButton(addCol);
+      // showButton(addRow);
+      // (colsCounter > 1 ? showButton(delCol) : false );
+      // (rowsCounter > 1 ? showButton(delRow) : false );
 
     });
 
