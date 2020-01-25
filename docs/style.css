@@ -1,4 +1,10 @@
 
+body {
+    width: 1300px;
+    height: 600px;
+    overflow-x: hidden;
+}
+
 #root {
     position: absolute;
     top:100px;
@@ -11,14 +17,24 @@
     left:100px;
 }
 
+.container {
+    position: absolute;
+    transition: all .3s;
+}
 
 .boxes-container {
     display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     border: 1px solid lightskyblue;
     position: relative;
     z-index: 2;
 }
-.box {
+
+.row {
+    display: flex;
+}
+.col {
     width: 50px;
     height: 50px;
     background:lightskyblue;
@@ -64,6 +80,7 @@
 }
 
 .delete {
+    display: none;
     background: brown;
     width: 52px;
     height:52px;
@@ -76,12 +93,12 @@
     transition: all .3s;
 }
 
-.delete:enabled:hover {
+.delete:hover {
     opacity: 0.7;
     transition: opacity .3s;
 }
 
-.add:enabled:hover {
+.add:hover {
     opacity: 0.7;
     transition: opacity .3s;
 }
@@ -108,7 +125,11 @@
 }
 
 .hide {
-    display: none;
+    opacity: 0;
+}
+.hide:hover {
+    opacity: 0;
+    cursor: default;
 }
 
 button {

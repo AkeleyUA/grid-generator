@@ -19,7 +19,7 @@ export default function ComponentTable(id) {
   addRow.classList.add('add-row', 'add');
   delCol.classList.add('del-col', 'delete');
   delRow.classList.add('del-row', 'delete');
-  
+
   addCol.innerText = '+';
   addRow.innerText = '+';
   delCol.innerText = '-';
@@ -157,7 +157,6 @@ export default function ComponentTable(id) {
     
 
     container.addEventListener('mousedown', (event) => {
-      console.log(event.target);
       if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
         move = true;
         hideButton(delCol);
