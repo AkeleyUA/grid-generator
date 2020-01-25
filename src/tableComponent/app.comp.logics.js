@@ -119,7 +119,7 @@ export default function ComponentTable(id) {
       row.removeChild(cols[currentCol]);
     });
 
-    (colLength < 1 ? hideButton(delCol) : showButton(delCol));
+    (colLength < 2 ? hideButton(delCol) : showButton(delCol));
     (colLength === currentCol ? 
       delCol.style.transform = `translateX(${colLength * boxFullSize - boxFullSize}px)` : 
       delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`);
