@@ -40,55 +40,64 @@ export default function ComponentTable(id) {
   let rowsCounter = 4;
   let currentCol = 0;
   let currentRow = 0;
+  let move = false;
+  let left = 0;
+  let top = 0;
 
-  const boxFullSize = 52
+  const boxFullSize = 52;
 
   const hideButton = (btn) => {
-    btn.style.display = 'none';
+    const button = btn;
+    button.style.display = 'none';
   };
   const showButton = (btn) => {
-    btn.style.display = 'block';
+    const button = btn;
+    button.style.display = 'block';
   };
 
   const createCol = (row, n) => {
-    for (let i = 0; i < n; i++) {
-      let col = document.createElement('div');
+    for (let i = 0; i < n; i += 1) {
+      const col = document.createElement('div');
       col.classList.add('col');
       row.append(col);
     }
   };
 
-  const createRow = (container, n) => {
-    for (let i = 0; i < n; i++) {
-      let row = document.createElement('div');
+  const createRow = (table, n) => {
+    for (let i = 0; i < n; i += 1) {
+      const row = document.createElement('div');
       row.classList.add('row');
       createCol(row, colsCounter);
-      container.append(row);
+      table.append(row);
     }
   };
 
   const rowsDataIndex = () => {
-    let rows = boxesContainer.querySelectorAll('.row');
+    const rows = boxesContainer.querySelectorAll('.row');
     rows.forEach((row, index) => {
-      row.dataset.rowIndex = index;
-      let cols = row.querySelectorAll('.col');
-        cols.forEach((col, index) => col.dataset.colIndex = index)
-    })
-  }
+      const rowWhitIndex = row;
+      rowWhitIndex.dataset.rowIndex = index;
+      const cols = row.querySelectorAll('.col');
+      cols.forEach((col, i) => {
+        const colWhitIndex = col;
+        colWhitIndex.dataset.colIndex = i;
+      });
+    });
+  };
 
   createRow(boxesContainer, rowsCounter);
   rowsDataIndex();
 
   addRow.addEventListener('click', () => {
-    rowsCounter++;
-    createRow(boxesContainer, rowsCounter - boxesContainer.children.length);  
+    rowsCounter += 1;
+    createRow(boxesContainer, rowsCounter - boxesContainer.children.length);
     rowsDataIndex();
   });
 
   addCol.addEventListener('click', () => {
-    colsCounter++;
-    let rows = boxesContainer.querySelectorAll('.row');
-    rows.forEach(row => {
+    colsCounter += 1;
+    const rows = boxesContainer.querySelectorAll('.row');
+    rows.forEach((row) => {
       createCol(row, colsCounter - row.children.length);
     });
     rowsDataIndex();
@@ -96,42 +105,38 @@ export default function ComponentTable(id) {
 
 
   delRow.addEventListener('click', () => {
-    let rows = container.querySelectorAll('.row');
-    let rowsLength = rows.length - 1;
+    const rows = container.querySelectorAll('.row');
+    const rowsLength = rows.length - 1;
 
     rows[currentRow].remove();
 
     (rowsLength < 2 ? hideButton(delRow) : showButton(delRow));
-    (rowsLength === currentRow ? 
-      delRow.style.transform = `translateY(${rowsLength * boxFullSize - boxFullSize}px)` : 
-      delRow.style.transform = `translateY(${+currentRow * boxFullSize}px)`);
-    (rowsCounter -1 > currentRow ? currentRow : currentRow--);
-    rowsCounter--;
+    (rowsLength === currentRow ? delRow.style.transform = `translateY(${rowsLength * boxFullSize - boxFullSize}px)` : delRow.style.transform = `translateY(${+currentRow * boxFullSize}px)`);
+    (rowsCounter - 1 > currentRow ? currentRow : currentRow -= 1);
+    rowsCounter -= 1;
     rowsDataIndex();
   });
 
   delCol.addEventListener('click', () => {
-    let rows = container.querySelectorAll('.row');
-    let colLength = rows[0].children.length - 1;
+    const rows = container.querySelectorAll('.row');
+    const colLength = rows[0].children.length - 1;
 
     rows.forEach((row) => {
-      let cols = row.querySelectorAll('.col');
+      const cols = row.querySelectorAll('.col');
       row.removeChild(cols[currentCol]);
     });
 
     (colLength < 2 ? hideButton(delCol) : showButton(delCol));
-    (colLength === currentCol ? 
-      delCol.style.transform = `translateX(${colLength * boxFullSize - boxFullSize}px)` : 
-      delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`);
-    (colsCounter -1 > currentCol ? currentCol : currentCol--);
-    colsCounter--;
+    (colLength === currentCol ? delCol.style.transform = `translateX(${colLength * boxFullSize - boxFullSize}px)` : delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`);
+    (colsCounter - 1 > currentCol ? currentCol : currentCol -= 1);
+    colsCounter -= 1;
     rowsDataIndex();
   });
 
   container.addEventListener('mouseover', (event) => {
     showButton(delCol);
     showButton(delRow);
-    let rows = container.querySelectorAll('.row');
+    const rows = container.querySelectorAll('.row');
     (rows[0].children.length < 2 ? hideButton(delCol) : showButton(delCol));
     (rows.length < 2 ? hideButton(delRow) : showButton(delRow));
 
@@ -149,48 +154,35 @@ export default function ComponentTable(id) {
     hideButton(delRow);
   });
 
+  container.addEventListener('mousedown', (event) => {
+    if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
+      move = true;
+      // hideButton(delCol);
+      // hideButton(delRow);
+      // hideButton(addCol);
+      // hideButton(addRow);
+      left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.offsetX;
+      top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.offsetY;
+    }
+  });
 
-  const containerMover = () => {
-    let move = false;
-    let left = 0;
-    let top = 0;
-    
+  container.addEventListener('mouseup', () => {
+    move = false;
+    // showButton(addCol);
+    // showButton(addRow);
+    // (colsCounter > 1 ? showButton(delCol) : false );
+    // (rowsCounter > 1 ? showButton(delRow) : false );
+  });
 
-    container.addEventListener('mousedown', (event) => {
-      if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
-        move = true;
-        // hideButton(delCol);
-        // hideButton(delRow);
-        // hideButton(addCol);
-        // hideButton(addRow);
-        left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.offsetX;
-        top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.offsetY;
-      }
-    });
+  window.addEventListener('mousemove', (event) => {
+    const mousePosition = {
+      x: event.clientX,
+      y: event.clientY,
+    };
 
-    container.addEventListener('mouseup', () => {
-      move = false;
-      // showButton(addCol);
-      // showButton(addRow);
-      // (colsCounter > 1 ? showButton(delCol) : false );
-      // (rowsCounter > 1 ? showButton(delRow) : false );
-
-    });
-
-    window.addEventListener('mousemove', event => {
-      let mousePosition = {
-        x:event.clientX,
-        y:event.clientY
-      }
-
-      if(move) {
-        container.style.left = `${mousePosition.x + left}px`; 
-        container.style.top = `${mousePosition.y + top}px`;
-      }
-    });
-
-  };
-
-
-  containerMover();
+    if (move) {
+      container.style.left = `${mousePosition.x + left}px`;
+      container.style.top = `${mousePosition.y + top}px`;
+    }
+  });
 }
