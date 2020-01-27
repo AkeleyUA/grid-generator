@@ -163,8 +163,8 @@ export default function ComponentTable(id) {
         // hideButton(delRow);
         // hideButton(addCol);
         // hideButton(addRow);
-        left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.target.getBoundingClientRect().width / 2;
-        top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.target.getBoundingClientRect().height / 2;
+        left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.offsetX;
+        top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.offsetY;
       }
     });
 
