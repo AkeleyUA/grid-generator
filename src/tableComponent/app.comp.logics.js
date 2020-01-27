@@ -36,8 +36,8 @@ export default function ComponentTable(id) {
 
   container.append(containerTable);
 
-  let colsCounter = 5;
-  let rowsCounter = 5;
+  let colsCounter = 4;
+  let rowsCounter = 4;
   let currentCol = 0;
   let currentRow = 0;
 
