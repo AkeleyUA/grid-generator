@@ -13,7 +13,7 @@ export default function ComponentTable(id) {
   addContainer.classList.add('add-btns-container');
   deleteContainer.classList.add('delete-btns-container');
   boxesContainer.classList.add('boxes-container');
-  containerTable.classList.add('container');
+  containerTable.classList.add('container-table');
 
   addCol.classList.add('add-col', 'add');
   addRow.classList.add('add-row', 'add');
@@ -40,7 +40,6 @@ export default function ComponentTable(id) {
   let rowsCounter = 4;
   let currentCol = 0;
   let currentRow = 0;
-  let move = false;
   let left = 0;
   let top = 0;
 
@@ -103,16 +102,18 @@ export default function ComponentTable(id) {
     rowsDataIndex();
   });
 
-
   delRow.addEventListener('click', () => {
     const rows = container.querySelectorAll('.row');
     const rowsLength = rows.length - 1;
-
     rows[currentRow].remove();
-
-    (rowsLength < 2 ? hideButton(delRow) : showButton(delRow));
-    (rowsLength === currentRow ? delRow.style.transform = `translateY(${rowsLength * boxFullSize - boxFullSize}px)` : delRow.style.transform = `translateY(${+currentRow * boxFullSize}px)`);
-    (rowsCounter - 1 > currentRow ? currentRow : currentRow -= 1);
+    if (rowsLength < 2) {
+      hideButton(delRow);
+    }
+    delRow.style.transform = `translateY(${(rowsLength === currentRow
+      ? (rowsLength - 1) * boxFullSize
+      : currentRow * boxFullSize
+    )}px)`;
+    currentRow = (rowsCounter - 1 > currentRow ? currentRow : currentRow - 1);
     rowsCounter -= 1;
     rowsDataIndex();
   });
@@ -125,21 +126,28 @@ export default function ComponentTable(id) {
       const cols = row.querySelectorAll('.col');
       row.removeChild(cols[currentCol]);
     });
-
-    (colLength < 2 ? hideButton(delCol) : showButton(delCol));
-    (colLength === currentCol ? delCol.style.transform = `translateX(${colLength * boxFullSize - boxFullSize}px)` : delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`);
-    (colsCounter - 1 > currentCol ? currentCol : currentCol -= 1);
+    if (colLength < 2) {
+      hideButton(delCol);
+    }
+    delCol.style.transform = `translateX(${(colLength === currentCol
+      ? (colLength - 1) * boxFullSize
+      : currentCol * boxFullSize
+    )}px)`;
+    currentCol = (colsCounter - 1 > currentCol ? currentCol : currentCol - 1);
     colsCounter -= 1;
     rowsDataIndex();
   });
 
   container.addEventListener('mouseover', (event) => {
-    showButton(delCol);
-    showButton(delRow);
-    const rows = container.querySelectorAll('.row');
-    (rows[0].children.length < 2 ? hideButton(delCol) : showButton(delCol));
-    (rows.length < 2 ? hideButton(delRow) : showButton(delRow));
+    const colsLength = container.querySelectorAll('.row')[0].children.length;
+    const rowsLength = container.querySelectorAll('.row').length;
 
+    if (colsLength > 1) {
+      showButton(delCol);
+    }
+    if (rowsLength > 1) {
+      showButton(delRow);
+    }
     if (event.target.classList.contains('col')) {
       currentCol = +event.target.dataset.colIndex;
       currentRow = +event.target.parentNode.dataset.rowIndex;
@@ -154,35 +162,25 @@ export default function ComponentTable(id) {
     hideButton(delRow);
   });
 
-  container.addEventListener('mousedown', (event) => {
-    if (!event.target.classList.contains('add') && !event.target.classList.contains('delete')) {
-      move = true;
-      // hideButton(delCol);
-      // hideButton(delRow);
-      // hideButton(addCol);
-      // hideButton(addRow);
-      left = container.getBoundingClientRect().left - event.target.getBoundingClientRect().left - event.offsetX;
-      top = container.getBoundingClientRect().top - event.target.getBoundingClientRect().top - event.offsetY;
-    }
-  });
-
-  container.addEventListener('mouseup', () => {
-    move = false;
-    // showButton(addCol);
-    // showButton(addRow);
-    // (colsCounter > 1 ? showButton(delCol) : false );
-    // (rowsCounter > 1 ? showButton(delRow) : false );
-  });
-
-  window.addEventListener('mousemove', (event) => {
+  const containerMover = (event) => {
     const mousePosition = {
       x: event.clientX,
       y: event.clientY,
     };
+    containerTable.style.left = `${mousePosition.x + left}px`;
+    containerTable.style.top = `${mousePosition.y + top}px`;
+  };
 
-    if (move) {
-      container.style.left = `${mousePosition.x + left}px`;
-      container.style.top = `${mousePosition.y + top}px`;
-    }
+  boxesContainer.addEventListener('mousedown', (event) => {
+    const containerTableRect = containerTable.getBoundingClientRect();
+    const eventReact = event.target.getBoundingClientRect();
+    left = containerTableRect.left - eventReact.left - event.offsetX;
+    top = containerTableRect.top - eventReact.top - event.offsetY;
+
+    window.addEventListener('mousemove', containerMover);
+  });
+
+  boxesContainer.addEventListener('mouseup', () => {
+    window.removeEventListener('mousemove', containerMover);
   });
 }
