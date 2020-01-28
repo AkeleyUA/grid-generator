@@ -183,4 +183,4 @@ export default function ComponentTable(id) {
   boxesContainer.addEventListener('mouseup', () => {
     window.removeEventListener('mousemove', containerMover);
   });
-}
+};
