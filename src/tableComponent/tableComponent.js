@@ -57,6 +57,7 @@ export default function ComponentTable(id) {
   const createCol = (row, n) => {
     for (let i = 0; i < n; i += 1) {
       const col = document.createElement('div');
+
       col.classList.add('col');
       row.append(col);
     }
@@ -65,6 +66,7 @@ export default function ComponentTable(id) {
   const createRow = (table, n) => {
     for (let i = 0; i < n; i += 1) {
       const row = document.createElement('div');
+
       row.classList.add('row');
       createCol(row, colsCounter);
       table.append(row);
@@ -73,13 +75,16 @@ export default function ComponentTable(id) {
 
   const rowsDataIndex = () => {
     const rows = boxesContainer.querySelectorAll('.row');
+
     rows.forEach((row, index) => {
-      const rowWhitIndex = row;
-      rowWhitIndex.dataset.rowIndex = index;
+      const rowWithIndex = row;
       const cols = row.querySelectorAll('.col');
+
+      rowWithIndex.dataset.rowIndex = index;
       cols.forEach((col, i) => {
-        const colWhitIndex = col;
-        colWhitIndex.dataset.colIndex = i;
+        const colWhithIndex = col;
+
+        colWhithIndex.dataset.colIndex = i;
       });
     });
   };
@@ -90,6 +95,9 @@ export default function ComponentTable(id) {
   addRow.addEventListener('click', () => {
     rowsCounter += 1;
     createRow(boxesContainer, rowsCounter - boxesContainer.children.length);
+    if (rowsCounter > 1) {
+      showButton(delRow);
+    }
     rowsDataIndex();
   });
 
@@ -99,6 +107,9 @@ export default function ComponentTable(id) {
     rows.forEach((row) => {
       createCol(row, colsCounter - row.children.length);
     });
+    if (colsCounter > 1) {
+      showButton(delCol);
+    }
     rowsDataIndex();
   });
 
@@ -138,26 +149,27 @@ export default function ComponentTable(id) {
     rowsDataIndex();
   });
 
-  container.addEventListener('mouseover', (event) => {
+  container.addEventListener('mouseenter', () => {
     const colsLength = container.querySelectorAll('.row')[0].children.length;
     const rowsLength = container.querySelectorAll('.row').length;
-
     if (colsLength > 1) {
       showButton(delCol);
     }
     if (rowsLength > 1) {
       showButton(delRow);
     }
+  });
+
+  containerTable.addEventListener('mouseover', (event) => {
     if (event.target.classList.contains('col')) {
       currentCol = +event.target.dataset.colIndex;
       currentRow = +event.target.parentNode.dataset.rowIndex;
     }
-
     delRow.style.transform = `translateY(${currentRow * boxFullSize}px)`;
     delCol.style.transform = `translateX(${currentCol * boxFullSize}px)`;
   });
 
-  container.addEventListener('mouseout', () => {
+  container.addEventListener('mouseleave', () => {
     hideButton(delCol);
     hideButton(delRow);
   });
@@ -183,4 +195,4 @@ export default function ComponentTable(id) {
   boxesContainer.addEventListener('mouseup', () => {
     window.removeEventListener('mousemove', containerMover);
   });
-};
+}
