@@ -95,8 +95,9 @@ export default function ComponentTable(id) {
   addRow.addEventListener('click', () => {
     rowsCounter += 1;
     createRow(boxesContainer, rowsCounter - boxesContainer.children.length);
-    if (rowsCounter > 1) {
+    if (rowsCounter === 2) {
       showButton(delRow);
+      console.log('вызов');
     }
     rowsDataIndex();
   });
@@ -107,8 +108,9 @@ export default function ComponentTable(id) {
     rows.forEach((row) => {
       createCol(row, colsCounter - row.children.length);
     });
-    if (colsCounter > 1) {
+    if (colsCounter === 2) {
       showButton(delCol);
+      console.log('вызов');
     }
     rowsDataIndex();
   });
